@@ -1,0 +1,112 @@
+.TH PROCS 1 "12 Nov 2011" "procs Client" "procs Client"
+
+.SH NAME
+procs \- procs client to migrate and checkpoint processes
+.br
+
+.SH SYNOPSIS
+.B procs
+[
+.B save
+|
+.B restore
+|
+.B send
+|
+.B receive
+|
+.B list
+|
+.B delete
+] [
+.B -h
+|
+.B -s
+|
+.B -n
+|
+.B -o
+|
+.B -K
+|
+.B -f
+|
+.B -v
+]
+.br
+
+
+.SH DESCRIPTION
+.I procs
+is a program for checkpointing and process migration, and as a standalone program it can save process to files
+and restored them, and as the client to
+.BR procsd (1)
+it can migrate process to another computer either instantaneously or saving its state before.
+As such, it provides a rudimentary program that it is able to freeze a process and save its state, allowing
+to have a backup file if the program fails, or a checkpoint in memory if used in conjuction with
+.BR procsd (1)
+It can only migrate 
+.I memory, the registers, open files, and the standard streams.
+Although the process will be saved to a file or sent to another machine, it will not behave properly 
+if it uses any other resource from the environment.
+.br
+
+.SH OPTIONS
+.IP "-h --help"
+display help and exit
+.IP "-v --verbose"
+verbose output
+.SS "save [PID]"
+.P 
+checkpoints the current state of the program pointed by PID or NAME.
+If no output is specified, tries local server to create new PROCS_ID to return
+and if the local server is not running, dumps output to stdout
+.IP "-n --name"
+name of process to be checkpointed
+.IP "-o --output"
+file to which checkpoint the process
+.IP "-K --nokill"
+keep the process running after the checkpoint
+.IP "-f --file-save"
+save all the contents from file descriptors and do not assume shared file when restoring
+.SS "restore [FILE|PROCS_ID]"
+.P 
+restores program pointed by FILE, and if it doesn't exist, checks PROCS_ID.
+.SS "send [FILE|PROCS_ID|PID]"
+.P 
+sends program pointed by PID, FILE or PROCS_ID (checks in that order) to SERVER.
+.IP "-s --server"
+IP:PORT or HOSTNAME:PORT of procs server to send process
+.IP "-n --name"
+name of process to be checkpointed
+.IP "-K --nokill"
+keep the process running after the checkpoint
+.SS "receive [PROCS_ID]"
+.P
+restores program pointed by PROCS_ID or waits until next process arrives.
+.SS list
+.P
+lists PROCS_ID in current server.
+.SS "delete [PROCS_ID]"
+.P
+deletes program referenced by PROCS_ID in local server.
+
+.SH EXAMPLES
+.IP "procs save 15325 -o tmp"
+save process with PID 15325 to file tmp
+.IP "procs restore tmp"
+restores process checkpointed in file tmp to current terminal
+.IP "procs receive"
+wait for next process to arrive and execute in current terminal
+.IP "procs send -n test -s 192.56.1.101"
+send process named test to server 192.56.1.101 running on default port
+
+.SH SEE ALSO
+.BR procsd (1)
+
+.SH BUGS
+It does not do a checkpoint of the process about to send.
+It does not handle errors so many problems may arise. Use -K so process is not killed.
+
+.SH AUTHORS
+Sebastián Ventura

@@ -1,0 +1,54 @@
+.TH PROCSD 1 "12 Nov 2011" "procs Server" "procs Server"
+
+.SH NAME
+procsd \- procs server to store and receive migrated processes
+.br
+
+.SH SYNOPSIS
+.B procsd
+[
+.B HOSTNAME
+[
+.B :PORT
+] 
+] [
+.B -h
+|
+.B -f
+|
+.B -v
+]
+.br
+
+
+.SH DESCRIPTION
+.I procsd
+is a daemon for migrating and storing processes. It works with the 
+.BR procs (1)
+client as an interface. It stores each process receive with an unique ID that can be later
+user to restore that process with the client.
+.br
+
+.SH OPTIONS
+.IP "-h --help"
+display help and exit
+.IP "-v --verbose"
+verbose output
+.IP "-f --nofork"
+do not fork program and do not daemonize
+
+.SH EXAMPLES
+.IP "procsd 192.168.56.1:6065 -f"
+run the server as a process binded to IP 192.168.56.1 and port 6065
+.IP "procsd"
+run the daemon with default host and port (127.0.0.1:12092)
+
+.SH SEE ALSO
+.BR procs (1)
+
+.SH BUGS
+It does not handle errors so many problems may arise. If daemon is restarted all processes
+saved are lost. Save process to file before shutting down the daemon.
+
+.SH AUTHORS
+Sebastián Ventura
